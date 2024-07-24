@@ -57,6 +57,7 @@ class Polygon {
         this.d = "";
         this.points = [];
         this.labels = [];
+        this.markers = [];
         this.point_list_elem = document.getElementById("point-list")
 
         this.radius = 50;
@@ -81,7 +82,7 @@ class Polygon {
     }
 
     setLineVisibility(b) {
-        this.line.style.stroke = b ? "#000" : "none";
+        this.line.style.stroke = b ? "#0008" : "none";
         this.update();
     }
 
@@ -109,23 +110,33 @@ class Polygon {
     }
 
     addPoint(x, y) {
-        let p = { x: x, y: y };
+        let p = { x: round(x), y: round(y) };
         this.points.push(p);
 
+        let marker = document.createElementNS("http://www.w3.org/2000/svg","use");
+        marker.setAttribute("x", x);
+        marker.setAttribute("y", y);
+        marker.setAttribute("href", "#point-marker");
+        this.markers.push(marker);
+        this.svg.appendChild(marker);
+
         let lbl = new PointLabel(p, this.points.length-1);
-        lbl.onxinput((e) => { p.x = +e.target.value; this.update(); });
-        lbl.onyinput((e) => { p.y = +e.target.value; this.update(); });
+        lbl.onxinput((e) => { p.x = +e.target.value; this.update(); marker.setAttribute("x", p.x); });
+        lbl.onyinput((e) => { p.y = +e.target.value; this.update(); marker.setAttribute("y", p.y); });
         lbl.ondelete(() => { this.removePoint(lbl.index); this.update(); });
 
         this.labels.push(lbl);
         this.point_list_elem.appendChild(lbl.lbl);
+
         this.update();
     }
 
     removePoint(i) {
         this.point_list_elem.removeChild(this.labels[i].lbl);
+        this.svg.removeChild(this.markers[i]);
         this.points.splice(i, 1);
         this.labels.splice(i, 1);
+        this.markers.splice(i, 1);
         this.updateLabels();
         this.update();
     }
@@ -206,6 +217,8 @@ class Polygon {
         this.points = [];
         this.d = "";
         this.update();
+        this.markers.forEach( m => {this.svg.removeChild(m)});
+        this.markers = [];
         this.point_list_elem.textContent = "";
     }
 }
