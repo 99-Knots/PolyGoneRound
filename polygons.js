@@ -21,11 +21,30 @@ class PointLabel {
         this.del_btn = document.createElement("button");
         this.del_btn.textContent = "x";
 
+        this.title = document.createTextNode(`Point ${this.index+1}: `)
+        this.lbl.appendChild(this.title);
         this.lbl.appendChild(document.createTextNode("x: "))
         this.lbl.appendChild(this.x_edt);
         this.lbl.appendChild(document.createTextNode(", y: "))
         this.lbl.appendChild(this.y_edt);
         this.lbl.appendChild(this.del_btn);
+    }
+
+    onxinput(fn) {
+        this.x_edt.oninput = fn;
+    }
+
+    onyinput(fn) {
+        this.y_edt.oninput = fn;
+    }
+
+    ondelete(fn) {
+        this.del_btn.onclick = fn;
+    }
+
+    setIndex(i) {
+        this.index = i;
+        this.title.textContent = `Point ${this.index+1}: `;
     }
 }
 
@@ -34,12 +53,15 @@ class Polygon {
         this.svg = document.getElementById("pen");
         this.line = this.svg.getElementsByTagName("polyline")[0];
         this.shape = this.svg.getElementsByTagName("path")[0];
+
         this.d = "";
         this.points = [];
         this.labels = [];
+        this.point_list_elem = document.getElementById("point-list")
+
         this.radius = 50;
         this.limit_radius = false;
-        this.point_list = document.getElementById("point-list")
+        this.corner_style = "arc";
 
         this.svg.addEventListener("pointerdown", (e) => {
             let x = e.offsetX;
@@ -68,6 +90,11 @@ class Polygon {
         this.update();
     }
 
+    setCornerStyle(s) {
+        this.corner_style = s;
+        this.update();
+    }
+
     setSVGPaths() {
         this.line.setAttribute(
             "points",
@@ -84,26 +111,19 @@ class Polygon {
     addPoint(x, y) {
         let p = { x: x, y: y };
         this.points.push(p);
-        this.update();
+
         let lbl = new PointLabel(p, this.points.length-1);
-        lbl.x_edt.oninput = (e) => {
-            p.x = +e.target.value;
-            this.update();
-        }
-        lbl.y_edt.oninput = (e) => {
-            p.y = +e.target.value;
-            this.update();
-        }
-        lbl.del_btn.onclick = () => {
-            this.removePoint(lbl.index);
-            this.update();
-        }
+        lbl.onxinput((e) => { p.x = +e.target.value; this.update(); });
+        lbl.onyinput((e) => { p.y = +e.target.value; this.update(); });
+        lbl.ondelete(() => { this.removePoint(lbl.index); this.update(); });
+
         this.labels.push(lbl);
-        this.point_list.appendChild(lbl.lbl);
+        this.point_list_elem.appendChild(lbl.lbl);
+        this.update();
     }
 
     removePoint(i) {
-        this.point_list.removeChild(this.labels[i].lbl);
+        this.point_list_elem.removeChild(this.labels[i].lbl);
         this.points.splice(i, 1);
         this.labels.splice(i, 1);
         this.updateLabels();
@@ -112,7 +132,7 @@ class Polygon {
 
     updateLabels() {
         for (let i=0; i<this.labels.length; i++) {
-            this.labels[i].index = i;
+            this.labels[i].setIndex(i);
         }
     }
 
@@ -169,8 +189,15 @@ class Polygon {
 
                 if (i == 0) this.d = `M${p.x - v1.x}, ${p.y - v1.y}`;
                 else this.d += ` L${p.x - v1.x}, ${p.y - v1.y}`;
-                this.d += ` A${r} ${r} 0 0 ${c} ${p.x + v2.x},${p.y + v2.y}`;
-                // this.d += ` Q${p.x},${p.y} ${p.x + v2.x},${p.y + v2.y}`;
+
+                switch (this.corner_style) {
+                    case ("arc"):
+                        this.d += ` A${r} ${r} 0 0 ${c} ${p.x + v2.x},${p.y + v2.y}`;
+                        break;
+                    case ("bezier"):
+                        this.d += ` Q${p.x},${p.y} ${p.x + v2.x},${p.y + v2.y}`;
+                        break;
+                }
             }
         }
     }
@@ -179,7 +206,7 @@ class Polygon {
         this.points = [];
         this.d = "";
         this.update();
-        this.point_list.textContent = "";
+        this.point_list_elem.textContent = "";
     }
 }
 
@@ -216,4 +243,8 @@ line_vis.oninput = () => {
 
 document.getElementById("color-pick").oninput = (e) => {
     poly.setColor(e.target.value);
+}
+
+document.getElementById("corner-style-edt").oninput = (e) => {
+    poly.setCornerStyle(e.target.value);
 }
