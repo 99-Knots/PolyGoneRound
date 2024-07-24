@@ -20,3 +20,11 @@
 .controls {
     margin: 2rem;
 }
+
+.slider-container {
+    display: flex;
+}
+
+.slider-container input:last-of-type {
+    width: 3em;
+}

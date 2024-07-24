@@ -19,19 +19,27 @@ class Polygon {
         });
     }
 
-    update() {
+    setRadius(r) {
+        this.radius = r;
+        this.update();
+    }
+
+    setSVGPaths() {
         this.line.setAttribute(
             "points",
             this.points.map((p) => ` ${p.x} ${p.y}`) +
             ` ${this.points[0]?.x} ${this.points[0]?.y}`
         );
-        this.shape.setAttribute("d", this.d);
+        this.shape.setAttribute("d", this.d);}
+
+    update() {
+        this.generateRoundedPath();
+        this.setSVGPaths();
     }
 
     addPoint(x, y) {
         let p = { x: x, y: y };
         this.points.push(p);
-        this.generateRoundedPath();
         this.update();
     }
 
@@ -85,11 +93,6 @@ class Polygon {
         }
     }
 
-    closeShape() {
-        this.generateRoundedPath();
-        this.update();
-    }
-
     clear(x, y) {
         this.points = [];
         this.d = "";
@@ -102,4 +105,19 @@ const controls = document.getElementById("controls");
 
 document.getElementById("clear-btn").onclick = () => {
     poly.clear();
+};
+
+radius_slider = document.getElementById("radius-sld");
+radius_edit = document.getElementById("radius-edt");
+poly.setRadius(radius_edit.value);
+
+radius_slider.oninput = (e) => {
+    radius_edit.value = e.target.value;
+    poly.setRadius(e.target.value);
+};
+
+radius_edit.oninput = (e) => {
+    let val = e.target.value > radius_edit.min ? e.target.value : radius_edit.min;
+    radius_slider.value = val;
+    poly.setRadius(val);
 };
