@@ -2,15 +2,12 @@
     width: 500px;
     height: 500px;
     background: lightgray;
+    padding: 1em;
 }
 
 .canvas svg {
     width: 100%;
     height: 100%;
-}
-
-.canvas svg path {
-    fill: blue;
 }
 
 .container {
@@ -27,4 +24,13 @@
 
 .slider-container input:last-of-type {
     width: 3em;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li input {
+    width: 4em;
+    text-align: right;
 }

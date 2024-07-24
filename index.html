@@ -11,8 +11,8 @@
     <div class="container">
         <div class="canvas">
             <svg id="pen">
-                <path fill="currentColor" d="M0,0" />
-                <polyline stroke="currentColor" fill="none" points="0,0" />
+                <path fill="#0000ff" d="M0,0" />
+                <polyline stroke="#000" fill="none" points="0,0" />
             </svg>
         </div>
         <div id="controls" class="controls">
@@ -27,9 +27,16 @@
             </div>
             <div>
                 <input id="line-vis-chk" type="checkbox" name="line visibility" checked>
-                <label for="line-vis-chk">visible outline</label>
+                <label for="line-vis-chk">show polygon outline</label>
+            </div>
+            <div>
+                <label for="color-pick">color: </label>
+                <input id="color-pick" type="color" value="#0000ff">
             </div>
             <button id="clear-btn">clear</button>
+            
+            <ul id="point-list">
+            </ul>
         </div>
     </div>
     <script src="polygons.js"></script>

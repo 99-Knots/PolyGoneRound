@@ -2,6 +2,33 @@ function round(num) {   // technically not perfect but good enough for working w
     return Math.round(num*100/100)
 }
 
+class PointLabel {
+    constructor(point, index, update_fn) {
+        this.index = index;
+        this.lbl = document.createElement("li");
+        this.lbl.classList.add("point-lbl");
+
+        this.x_edt = document.createElement("input");
+        this.x_edt.type = "number";
+        this.x_edt.min = 0;
+        this.x_edt.value = point.x;
+
+        this.y_edt = document.createElement("input");
+        this.y_edt.type = "number";
+        this.y_edt.min = 0;
+        this.y_edt.value = point.y;
+
+        this.del_btn = document.createElement("button");
+        this.del_btn.textContent = "x";
+
+        this.lbl.appendChild(document.createTextNode("x: "))
+        this.lbl.appendChild(this.x_edt);
+        this.lbl.appendChild(document.createTextNode(", y: "))
+        this.lbl.appendChild(this.y_edt);
+        this.lbl.appendChild(this.del_btn);
+    }
+}
+
 class Polygon {
     constructor() {
         this.svg = document.getElementById("pen");
@@ -9,11 +36,12 @@ class Polygon {
         this.shape = this.svg.getElementsByTagName("path")[0];
         this.d = "";
         this.points = [];
+        this.labels = [];
         this.radius = 50;
         this.limit_radius = false;
+        this.point_list = document.getElementById("point-list")
 
         this.svg.addEventListener("pointerdown", (e) => {
-            let rect = this.svg.getBoundingClientRect();
             let x = e.offsetX;
             let y = e.offsetY;
             this.addPoint(x, y);
@@ -35,11 +63,16 @@ class Polygon {
         this.update();
     }
 
+    setColor(c) {
+        this.shape.style.fill = c;
+        this.update();
+    }
+
     setSVGPaths() {
         this.line.setAttribute(
             "points",
             this.points.map((p) => ` ${p.x} ${p.y}`) +
-            ` ${this.points[0]?.x} ${this.points[0]?.y}`
+            ` ${this.points[0]?.x ?? 0} ${this.points[0]?.y ?? 0}`
         );
         this.shape.setAttribute("d", this.d);}
 
@@ -52,6 +85,35 @@ class Polygon {
         let p = { x: x, y: y };
         this.points.push(p);
         this.update();
+        let lbl = new PointLabel(p, this.points.length-1);
+        lbl.x_edt.oninput = (e) => {
+            p.x = +e.target.value;
+            this.update();
+        }
+        lbl.y_edt.oninput = (e) => {
+            p.y = +e.target.value;
+            this.update();
+        }
+        lbl.del_btn.onclick = () => {
+            this.removePoint(lbl.index);
+            this.update();
+        }
+        this.labels.push(lbl);
+        this.point_list.appendChild(lbl.lbl);
+    }
+
+    removePoint(i) {
+        this.point_list.removeChild(this.labels[i].lbl);
+        this.points.splice(i, 1);
+        this.labels.splice(i, 1);
+        this.updateLabels();
+        this.update();
+    }
+
+    updateLabels() {
+        for (let i=0; i<this.labels.length; i++) {
+            this.labels[i].index = i;
+        }
     }
 
     getPointParameters(index) {
@@ -117,11 +179,11 @@ class Polygon {
         this.points = [];
         this.d = "";
         this.update();
+        this.point_list.textContent = "";
     }
 }
 
 const poly = new Polygon();
-const controls = document.getElementById("controls");
 
 document.getElementById("clear-btn").onclick = () => {
     poly.clear();
@@ -151,3 +213,7 @@ line_vis = document.getElementById("line-vis-chk");
 line_vis.oninput = () => {
     poly.setLineVisibility(line_vis.checked);
 } 
+
+document.getElementById("color-pick").oninput = (e) => {
+    poly.setColor(e.target.value);
+}
