@@ -10,6 +10,7 @@ class Polygon {
         this.d = "";
         this.points = [];
         this.radius = 50;
+        this.limit_radius = false;
 
         this.svg.addEventListener("pointerdown", (e) => {
             let rect = this.svg.getBoundingClientRect();
@@ -21,6 +22,11 @@ class Polygon {
 
     setRadius(r) {
         this.radius = r;
+        this.update();
+    }
+
+    setLimitRadius(b) {
+        this.limit_radius = b;
         this.update();
     }
 
@@ -76,20 +82,29 @@ class Polygon {
     }
 
     generateRoundedPath() {
-        let param_list = this.points.map((p, i) => this.getPointParameters(i));
-        for (let i = 0; i < this.points.length; i++) {
-            let {radius: r, invert_curve: c, point: p, vector1: v1, vectr2: v2, angle: angle, length: l} = param_list[i];
+        if (this.points.length > 1) {
+            let param_list = this.points.map((p, i) => this.getPointParameters(i));
+            let min_r = param_list.reduce((min, current) => current.radius < min ? current.radius : min, param_list[0].radius);
 
-            v1.x = round(v1.x * l);
-            v1.y = round(v1.y * l);
-            v2.x = round(v2.x * l);
-            v2.y = round(v2.y * l);
-            r = round(r);
+            for (let i = 0; i < this.points.length; i++) {
+                let {radius: r, invert_curve: c, point: p, vector1: v1, vectr2: v2, angle: angle, length: l} = param_list[i];
 
-            if (i == 0) this.d = `M${p.x - v1.x}, ${p.y - v1.y}`;
-            else this.d += ` L${p.x - v1.x}, ${p.y - v1.y}`;
-            this.d += ` A${r} ${r} 0 0 ${c} ${p.x + v2.x},${p.y + v2.y}`;
-            // this.d += ` Q${p.x},${p.y} ${p.x + v2.x},${p.y + v2.y}`;
+                if (this.limit_radius) {
+                    l = min_r / Math.abs(Math.tan(angle / 2));
+                    r = min_r;
+                }
+
+                v1.x = round(v1.x * l);
+                v1.y = round(v1.y * l);
+                v2.x = round(v2.x * l);
+                v2.y = round(v2.y * l);
+                r = round(r);
+
+                if (i == 0) this.d = `M${p.x - v1.x}, ${p.y - v1.y}`;
+                else this.d += ` L${p.x - v1.x}, ${p.y - v1.y}`;
+                this.d += ` A${r} ${r} 0 0 ${c} ${p.x + v2.x},${p.y + v2.y}`;
+                // this.d += ` Q${p.x},${p.y} ${p.x + v2.x},${p.y + v2.y}`;
+            }
         }
     }
 
@@ -109,6 +124,7 @@ document.getElementById("clear-btn").onclick = () => {
 
 radius_slider = document.getElementById("radius-sld");
 radius_edit = document.getElementById("radius-edt");
+radius_check = document.getElementById("radius-limit-chk");
 poly.setRadius(radius_edit.value);
 
 radius_slider.oninput = (e) => {
@@ -121,3 +137,7 @@ radius_edit.oninput = (e) => {
     radius_slider.value = val;
     poly.setRadius(val);
 };
+
+radius_check.oninput = (e) => {
+    poly.setLimitRadius(radius_check.checked);
+}

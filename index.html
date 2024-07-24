@@ -17,8 +17,13 @@
         </div>
         <div id="controls" class="controls">
             <div class="slider-container">
+                <label for="radius-sld">radius: </label>
                 <input id="radius-sld" type="range" min="0" max="100" value="50">
                 <input id="radius-edt" type="number" min="0" max="999" step="10" value="50">
+            </div>
+            <div>
+                <input id="radius-limit-chk" type="checkbox" name="limit radius">
+                <label for="radius-limit-chk">enforce consistent radius</label>
             </div>
             <button id="clear-btn">clear</button>
         </div>
