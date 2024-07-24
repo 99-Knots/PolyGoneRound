@@ -30,6 +30,11 @@ class Polygon {
         this.update();
     }
 
+    setLineVisibility(b) {
+        this.line.style.stroke = b ? "#000" : "none";
+        this.update();
+    }
+
     setSVGPaths() {
         this.line.setAttribute(
             "points",
@@ -138,6 +143,11 @@ radius_edit.oninput = (e) => {
     poly.setRadius(val);
 };
 
-radius_check.oninput = (e) => {
+radius_check.oninput = () => {
     poly.setLimitRadius(radius_check.checked);
 }
+
+line_vis = document.getElementById("line-vis-chk");
+line_vis.oninput = () => {
+    poly.setLineVisibility(line_vis.checked);
+} 
