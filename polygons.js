@@ -7,16 +7,19 @@ class PointLabel {
         this.index = index;
         this.lbl = document.createElement("li");
         this.lbl.classList.add("point-lbl");
+        this.lbl.id = `point-${this.index+1}-lbl`;
 
         this.x_edt = document.createElement("input");
         this.x_edt.type = "number";
         this.x_edt.min = 0;
         this.x_edt.value = point.x;
+        this.x_edt.id = `point-${this.index+1}-x-edt`;
 
         this.y_edt = document.createElement("input");
         this.y_edt.type = "number";
         this.y_edt.min = 0;
         this.y_edt.value = point.y;
+        this.y_edt.id = `point-${this.index+1}-y-edt`;
 
         this.del_btn = document.createElement("button");
         this.del_btn.textContent = "x";
@@ -45,6 +48,9 @@ class PointLabel {
     setIndex(i) {
         this.index = i;
         this.title.textContent = `Point ${this.index+1}: `;
+        this.lbl.id = `point-${this.index+1}-lbl`;
+        this.x_edt.id = `point-${this.index+1}-x-edt`;
+        this.y_edt.id = `point-${this.index+1}-y-edt`;
     }
 }
 
@@ -63,12 +69,37 @@ class Polygon {
         this.radius = 50;
         this.limit_radius = false;
         this.corner_style = "arc";
+        let selected = undefined;
+        let marker_radius = 15;
+        document.getElementById("point-marker").setAttribute("r", marker_radius);
 
         this.svg.addEventListener("pointerdown", (e) => {
             let x = e.offsetX;
             let y = e.offsetY;
-            this.addPoint(x, y);
+            for (let i=0; i<this.markers.length; i++) {
+                let p = this.points[i]
+
+                if ((x-p.x)**2 + (y-p.y)**2 < (marker_radius + 5)**2) {
+                    selected = i;
+                }
+            }
+            if (selected === undefined)
+                this.addPoint(x, y);
         });
+
+        this.svg.addEventListener("pointermove", (e) => {
+            if (selected !== undefined) {
+                this.editPoint(selected, e.offsetX, e.offsetY);
+            }
+        });
+
+        this.svg.addEventListener("pointerup", (e) => {
+            selected = undefined;
+        });
+
+        this.svg.addEventListener("pointerleave", (e) => {
+            selected = undefined;
+        })
     }
 
     setRadius(r) {
@@ -109,6 +140,21 @@ class Polygon {
         this.setSVGPaths();
     }
 
+    editPoint(index, x=undefined, y=undefined) {
+        if (x) {
+            this.points[index].x = x;
+            this.markers[index].setAttribute("x", x);
+            this.labels[index].x_edt.value = x;
+        }
+        
+        if (y) {
+            this.points[index].y = y;
+            this.markers[index].setAttribute("y", y);
+            this.labels[index].y_edt.value = y;
+        }
+        this.update();
+    }
+
     addPoint(x, y) {
         let p = { x: round(x), y: round(y) };
         this.points.push(p);
@@ -121,9 +167,9 @@ class Polygon {
         this.svg.appendChild(marker);
 
         let lbl = new PointLabel(p, this.points.length-1);
-        lbl.onxinput((e) => { p.x = +e.target.value; this.update(); marker.setAttribute("x", p.x); });
+        lbl.onxinput((e) => { this.editPoint(lbl.index, +e.target.value) });
         lbl.onyinput((e) => { p.y = +e.target.value; this.update(); marker.setAttribute("y", p.y); });
-        lbl.ondelete(() => { this.removePoint(lbl.index); this.update(); });
+        lbl.ondelete(() => { this.removePoint(lbl.index); });
 
         this.labels.push(lbl);
         this.point_list_elem.appendChild(lbl.lbl);

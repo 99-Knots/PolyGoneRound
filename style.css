@@ -2,6 +2,7 @@
     width: 500px;
     height: 500px;
     background: lightgray;
+    touch-action: none;
 }
 
 .canvas svg {
@@ -33,4 +34,9 @@ ul {
 li input {
     width: 4em;
     text-align: right;
+}
+
+use {
+    fill: #faa8;
+    stroke: #fffa
 }
