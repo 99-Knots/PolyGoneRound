@@ -53,6 +53,10 @@ class PointLabel {
         this._y_edt.id = `point-${this._index+1}-y-edt`;
     }
 
+    getLabel() {
+        return this._lbl;
+    }
+
     getXvalue() {
         return this._x_edt.value;
     }
@@ -197,7 +201,7 @@ class Polygon {
     }
 
     removePoint(i) {
-        this._point_list_elem.removeChild(this._labels[i].lbl);
+        this._point_list_elem.removeChild(this._labels[i].getLabel());
         this._svg.removeChild(this._markers[i]);
         this._points.splice(i, 1);
         this._labels.splice(i, 1);
