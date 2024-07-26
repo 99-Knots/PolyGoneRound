@@ -4,80 +4,96 @@ function round(num) {   // technically not perfect but good enough for working w
 
 class PointLabel {
     constructor(point, index, update_fn) {
-        this.index = index;
-        this.lbl = document.createElement("li");
-        this.lbl.classList.add("point-lbl");
-        this.lbl.id = `point-${this.index+1}-lbl`;
+        this._index = index;
+        this._lbl = document.createElement("li");
+        this._lbl.classList.add("point-lbl");
+        this._lbl.id = `point-${this._index+1}-lbl`;
 
-        this.x_edt = document.createElement("input");
-        this.x_edt.type = "number";
-        this.x_edt.min = 0;
-        this.x_edt.value = point.x;
-        this.x_edt.id = `point-${this.index+1}-x-edt`;
+        this._x_edt = document.createElement("input");
+        this._x_edt.type = "number";
+        this._x_edt.min = 0;
+        this._x_edt.value = point.x;
+        this._x_edt.id = `point-${this._index+1}-x-edt`;
 
-        this.y_edt = document.createElement("input");
-        this.y_edt.type = "number";
-        this.y_edt.min = 0;
-        this.y_edt.value = point.y;
-        this.y_edt.id = `point-${this.index+1}-y-edt`;
+        this._y_edt = document.createElement("input");
+        this._y_edt.type = "number";
+        this._y_edt.min = 0;
+        this._y_edt.value = point.y;
+        this._y_edt.id = `point-${this._index+1}-y-edt`;
 
-        this.del_btn = document.createElement("button");
-        this.del_btn.textContent = "x";
+        this._del_btn = document.createElement("button");
+        this._del_btn.textContent = "x";
 
-        this.title = document.createTextNode(`Point ${this.index+1}: `)
-        this.lbl.appendChild(this.title);
-        this.lbl.appendChild(document.createTextNode("x: "))
-        this.lbl.appendChild(this.x_edt);
-        this.lbl.appendChild(document.createTextNode(", y: "))
-        this.lbl.appendChild(this.y_edt);
-        this.lbl.appendChild(this.del_btn);
+        this._title = document.createTextNode(`Point ${this._index+1}: `)
+        this._lbl.appendChild(this._title);
+        this._lbl.appendChild(document.createTextNode("x: "))
+        this._lbl.appendChild(this._x_edt);
+        this._lbl.appendChild(document.createTextNode(", y: "))
+        this._lbl.appendChild(this._y_edt);
+        this._lbl.appendChild(this._del_btn);
     }
 
-    onxinput(fn) {
-        this.x_edt.oninput = fn;
+    setOnxinput(fn) {
+        this._x_edt.oninput = fn;
     }
 
-    onyinput(fn) {
-        this.y_edt.oninput = fn;
+    setOnyinput(fn) {
+        this._y_edt.oninput = fn;
     }
 
-    ondelete(fn) {
-        this.del_btn.onclick = fn;
+    setOndelete(fn) {
+        this._del_btn.onclick = fn;
     }
 
     setIndex(i) {
-        this.index = i;
-        this.title.textContent = `Point ${this.index+1}: `;
-        this.lbl.id = `point-${this.index+1}-lbl`;
-        this.x_edt.id = `point-${this.index+1}-x-edt`;
-        this.y_edt.id = `point-${this.index+1}-y-edt`;
+        this._index = i;
+        this._title.textContent = `Point ${this._index+1}: `;
+        this._lbl.id = `point-${this._index+1}-lbl`;
+        this._x_edt.id = `point-${this._index+1}-x-edt`;
+        this._y_edt.id = `point-${this._index+1}-y-edt`;
+    }
+
+    getXvalue() {
+        return this._x_edt.value;
+    }
+
+    getYvalue() {
+        return this._y_edt.value;
+    }
+
+    setXvalue(x) {
+        this._x_edt.value = x;
+    }
+
+    setYvalue(y) {
+        this._y_edt.value = y;
     }
 }
 
 class Polygon {
     constructor() {
-        this.svg = document.getElementById("pen");
-        this.line = this.svg.getElementsByTagName("polyline")[0];
-        this.shape = this.svg.getElementsByTagName("path")[0];
+        this._svg = document.getElementById("pen");
+        this._line = this._svg.getElementsByTagName("polyline")[0];
+        this._shape = this._svg.getElementsByTagName("path")[0];
 
-        this.d = "";
-        this.points = [];
-        this.labels = [];
-        this.markers = [];
-        this.point_list_elem = document.getElementById("point-list")
+        this._d = "";
+        this._points = [];
+        this._labels = [];
+        this._markers = [];
+        this._point_list_elem = document.getElementById("point-list")
 
-        this.radius = 50;
-        this.limit_radius = false;
-        this.corner_style = "arc";
+        this._radius = 50;
+        this._limit_radius = false;
+        this._corner_style = "arc";
         let selected = undefined;
         let marker_radius = 15;
         document.getElementById("point-marker").setAttribute("r", marker_radius);
 
-        this.svg.addEventListener("pointerdown", (e) => {
+        this._svg.addEventListener("pointerdown", (e) => {
             let x = e.offsetX;
             let y = e.offsetY;
-            for (let i=0; i<this.markers.length; i++) {
-                let p = this.points[i]
+            for (let i=0; i<this._markers.length; i++) {
+                let p = this._points[i]
 
                 if ((x-p.x)**2 + (y-p.y)**2 < (marker_radius + 5)**2) {
                     selected = i;
@@ -87,116 +103,119 @@ class Polygon {
                 this.addPoint(x, y);
         });
 
-        this.svg.addEventListener("pointermove", (e) => {
+        this._svg.addEventListener("pointermove", (e) => {
             if (selected !== undefined) {
                 this.editPoint(selected, e.offsetX, e.offsetY);
             }
         });
 
-        this.svg.addEventListener("pointerup", (e) => {
+        this._svg.addEventListener("pointerup", (e) => {
             selected = undefined;
         });
 
-        this.svg.addEventListener("pointerleave", (e) => {
+        this._svg.addEventListener("pointerleave", (e) => {
             selected = undefined;
         })
+
+        this.update();
     }
 
     setRadius(r) {
-        this.radius = r;
+        this._radius = r;
         this.update();
     }
 
     setLimitRadius(b) {
-        this.limit_radius = b;
+        this._limit_radius = b;
         this.update();
     }
 
     setLineVisibility(b) {
-        this.line.style.stroke = b ? "#0008" : "none";
+        this._line.style.stroke = b ? "#0008" : "none";
         this.update();
     }
 
     setColor(c) {
-        this.shape.style.fill = c;
+        this._shape.setAttribute("fill", c);
         this.update();
     }
 
     setCornerStyle(s) {
-        this.corner_style = s;
+        this._corner_style = s;
         this.update();
     }
 
     setSVGPaths() {
-        this.line.setAttribute(
+        this._line.setAttribute(
             "points",
-            this.points.map((p) => ` ${p.x} ${p.y}`) +
-            ` ${this.points[0]?.x ?? 0} ${this.points[0]?.y ?? 0}`
+            this._points.map((p) => ` ${p.x} ${p.y}`) +
+            ` ${this._points[0]?.x ?? 0} ${this._points[0]?.y ?? 0}`
         );
-        this.shape.setAttribute("d", this.d);}
+        this._shape.setAttribute("d", this._d);}
 
     update() {
         this.generateRoundedPath();
         this.setSVGPaths();
+        this.createSVGCode();
     }
 
     editPoint(index, x=undefined, y=undefined) {
         if (x) {
-            this.points[index].x = x;
-            this.markers[index].setAttribute("x", x);
-            this.labels[index].x_edt.value = x;
+            this._points[index].x = x;
+            this._markers[index].setAttribute("x", x);
+            this._labels[index].setXvalue(x);
         }
         
         if (y) {
-            this.points[index].y = y;
-            this.markers[index].setAttribute("y", y);
-            this.labels[index].y_edt.value = y;
+            this._points[index].y = y;
+            this._markers[index].setAttribute("y", y);
+            this._labels[index].setYvalue(y);
         }
         this.update();
     }
 
     addPoint(x, y) {
         let p = { x: round(x), y: round(y) };
-        this.points.push(p);
+        this._points.push(p);
 
         let marker = document.createElementNS("http://www.w3.org/2000/svg","use");
         marker.setAttribute("x", x);
         marker.setAttribute("y", y);
         marker.setAttribute("href", "#point-marker");
-        this.markers.push(marker);
-        this.svg.appendChild(marker);
+        this._markers.push(marker);
+        this._svg.appendChild(marker);
 
-        let lbl = new PointLabel(p, this.points.length-1);
-        lbl.onxinput((e) => { this.editPoint(lbl.index, +e.target.value) });
-        lbl.onyinput((e) => { p.y = +e.target.value; this.update(); marker.setAttribute("y", p.y); });
-        lbl.ondelete(() => { this.removePoint(lbl.index); });
+        let lbl = new PointLabel(p, this._points.length-1);
+        lbl.setOnxinput((e) => { this.editPoint(lbl._index, +e.target.value) });
+        lbl.setOnyinput((e) => { p.y = +e.target.value; this.update(); marker.setAttribute("y", p.y); });
+        lbl.setOndelete(() => { this.removePoint(lbl._index); });
 
-        this.labels.push(lbl);
-        this.point_list_elem.appendChild(lbl.lbl);
+        this._labels.push(lbl);
+        this._point_list_elem.appendChild(lbl._lbl);
 
         this.update();
     }
 
     removePoint(i) {
-        this.point_list_elem.removeChild(this.labels[i].lbl);
-        this.svg.removeChild(this.markers[i]);
-        this.points.splice(i, 1);
-        this.labels.splice(i, 1);
-        this.markers.splice(i, 1);
+        this._point_list_elem.removeChild(this._labels[i].lbl);
+        this._svg.removeChild(this._markers[i]);
+        this._points.splice(i, 1);
+        this._labels.splice(i, 1);
+        this._markers.splice(i, 1);
         this.updateLabels();
         this.update();
     }
 
     updateLabels() {
-        for (let i=0; i<this.labels.length; i++) {
-            this.labels[i].setIndex(i);
+        for (let i=0; i<this._labels.length; i++) {
+            this._labels[i].setIndex(i);
         }
     }
 
-    getPointParameters(index) {
-        const p_prev = this.points[index - 1] ?? this.points[this.points.length - 1];
-        const p = this.points[index];
-        const p_next = this.points[index + 1] ?? this.points[0];
+    _getPointParameters(index) {
+        const p_prev = this._points[index - 1] ?? this._points[this._points.length - 1];
+        const p = this._points[index];
+        const p_next = this._points[index + 1] ?? this._points[0];
 
         const v1 = { x: p.x - p_prev.x, y: p.y - p_prev.y };
         const v1_l = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
@@ -214,8 +233,8 @@ class Polygon {
 
         let invert_curve = angle > Math.PI ? 0 : 1;
 
-        let l = this.radius / Math.abs(Math.tan(angle / 2));
-        let r = this.radius;
+        let l = this._radius / Math.abs(Math.tan(angle / 2));
+        let r = this._radius;
 
         let min = Math.min(v1_l / 2, v2_l / 2);
         if (l > min) {
@@ -226,14 +245,14 @@ class Polygon {
     }
 
     generateRoundedPath() {
-        if (this.points.length > 1) {
-            let param_list = this.points.map((p, i) => this.getPointParameters(i));
+        if (this._points.length > 1) {
+            let param_list = this._points.map((p, i) => this._getPointParameters(i));
             let min_r = param_list.reduce((min, current) => current.radius < min ? current.radius : min, param_list[0].radius);
 
-            for (let i = 0; i < this.points.length; i++) {
+            for (let i = 0; i < this._points.length; i++) {
                 let {radius: r, invert_curve: c, point: p, vector1: v1, vectr2: v2, angle: angle, length: l} = param_list[i];
 
-                if (this.limit_radius) {
+                if (this._limit_radius) {
                     l = min_r / Math.abs(Math.tan(angle / 2));
                     r = min_r;
                 }
@@ -244,28 +263,34 @@ class Polygon {
                 v2.y = round(v2.y * l);
                 r = round(r);
 
-                if (i == 0) this.d = `M${p.x - v1.x}, ${p.y - v1.y}`;
-                else this.d += ` L${p.x - v1.x}, ${p.y - v1.y}`;
+                if (i == 0) this._d = `M${p.x - v1.x}, ${p.y - v1.y}`;
+                else this._d += ` L${p.x - v1.x}, ${p.y - v1.y}`;
 
-                switch (this.corner_style) {
+                switch (this._corner_style) {
                     case ("arc"):
-                        this.d += ` A${r} ${r} 0 0 ${c} ${p.x + v2.x},${p.y + v2.y}`;
+                        this._d += ` A${r} ${r} 0 0 ${c} ${p.x + v2.x}, ${p.y + v2.y}`;
                         break;
                     case ("bezier"):
-                        this.d += ` Q${p.x},${p.y} ${p.x + v2.x},${p.y + v2.y}`;
+                        this._d += ` Q${p.x}, ${p.y} ${p.x + v2.x}, ${p.y + v2.y}`;
                         break;
                 }
             }
         }
     }
 
+    createSVGCode() {
+        let code = "";
+        code = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">\n\t<path fill="${this._shape.getAttribute("fill")}" d="${this._d}"/>\n</svg>`
+        document.getElementById("path-code").innerText = code;
+    }
+
     clear(x, y) {
-        this.points = [];
-        this.d = "";
+        this._points = [];
+        this._d = "";
         this.update();
-        this.markers.forEach( m => {this.svg.removeChild(m)});
-        this.markers = [];
-        this.point_list_elem.textContent = "";
+        this._markers.forEach( m => {this._svg.removeChild(m)});
+        this._markers = [];
+        this._point_list_elem.textContent = "";
     }
 }
 
@@ -274,6 +299,16 @@ const poly = new Polygon();
 document.getElementById("clear-btn").onclick = () => {
     poly.clear();
 };
+
+document.getElementById("copy-code-btn").onclick = () => {
+    navigator.clipboard.writeText(document.getElementById("path-code").innerText)
+        .then(() => {
+            alert('Text copied to clipboard');
+        })
+        .catch(err => {
+            console.error('Error copying text: ', err);
+        });
+}
 
 radius_slider = document.getElementById("radius-sld");
 radius_edit = document.getElementById("radius-edt");

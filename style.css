@@ -3,6 +3,7 @@
     height: 500px;
     background: lightgray;
     touch-action: none;
+    user-select: none;
 }
 
 .canvas svg {
@@ -26,6 +27,12 @@
     width: 3em;
 }
 
+.code-container {
+    width: 50vw;
+    position: relative;
+    padding: 1.5em;
+}
+
 ul {
     list-style-type: none;
     padding-inline-start: 0;
@@ -39,4 +46,15 @@ li input {
 use {
     fill: #faa8;
     stroke: #fffa
+}
+
+
+#path-code {
+    white-space: pre-wrap;
+}
+
+#copy-code-btn {
+    position: absolute;
+    right: 1em;
+    top: 1em;
 }
