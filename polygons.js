@@ -1,5 +1,6 @@
-function round(num) {   // technically not perfect but good enough for working with pixel fractions
-    return Math.round(num*100/100)
+function round(num, decimals=2) {   // technically not perfect but good enough for working with pixel fractions
+    let factor = 10**decimals;
+    return Math.round(num*factor/factor)
 }
 
 class PointLabel {
@@ -24,11 +25,14 @@ class PointLabel {
         this._del_btn = document.createElement("button");
         this._del_btn.textContent = "x";
 
-        this._title = document.createTextNode(`Point ${this._index+1}: `)
+        this._title = document.createElement("span");
+        this._title.textContent = `Point ${this._index+1}: `;
+        this._title.classList.add("title");
+
         this._lbl.appendChild(this._title);
         this._lbl.appendChild(document.createTextNode("x: "))
         this._lbl.appendChild(this._x_edt);
-        this._lbl.appendChild(document.createTextNode(", y: "))
+        this._lbl.appendChild(document.createTextNode("y: "))
         this._lbl.appendChild(this._y_edt);
         this._lbl.appendChild(this._del_btn);
     }
@@ -51,6 +55,10 @@ class PointLabel {
         this._lbl.id = `point-${this._index+1}-lbl`;
         this._x_edt.id = `point-${this._index+1}-x-edt`;
         this._y_edt.id = `point-${this._index+1}-y-edt`;
+    }
+
+    getIndex() {
+        return this._index;
     }
 
     getLabel() {
@@ -76,9 +84,15 @@ class PointLabel {
 
 class Polygon {
     constructor() {
-        this._svg = document.getElementById("pen");
+        this._svg = document.getElementById("canvas");
         this._line = this._svg.getElementsByTagName("polyline")[0];
         this._shape = this._svg.getElementsByTagName("path")[0];
+
+        this._size = 500;
+        this._padding = 10;
+        this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._size+2*this._padding} ${this._size+2*this._padding}`);
+        this._svg.setAttribute("width", `${this._size+2*this._padding}`);
+        this._svg.setAttribute("height", `${this._size+2*this._padding}`);
 
         this._d = "";
         this._points = [];
@@ -94,8 +108,8 @@ class Polygon {
         document.getElementById("point-marker").setAttribute("r", marker_radius);
 
         this._svg.addEventListener("pointerdown", (e) => {
-            let x = e.offsetX;
-            let y = e.offsetY;
+            let x = e.offsetX-this._padding;
+            let y = e.offsetY-this._padding;
             for (let i=0; i<this._markers.length; i++) {
                 let p = this._points[i]
 
@@ -109,7 +123,7 @@ class Polygon {
 
         this._svg.addEventListener("pointermove", (e) => {
             if (selected !== undefined) {
-                this.editPoint(selected, e.offsetX, e.offsetY);
+                this.editPoint(selected, e.offsetX-this._padding, e.offsetY-this._padding);
             }
         });
 
@@ -119,7 +133,7 @@ class Polygon {
 
         this._svg.addEventListener("pointerleave", (e) => {
             selected = undefined;
-        })
+        });
 
         this.update();
     }
@@ -163,14 +177,26 @@ class Polygon {
         this.createSVGCode();
     }
 
+    getHalfwayPoint(index=undefined) {
+        let i = index ?? this._points.length-1;
+
+        let p = this._points[i]??{x: 0, y: 0};
+        let p_next = this._points[i>=this._points.length-1? 0: i+1];
+        const vx = (p_next?.x ?? p.x*2) - p.x;
+        const vy = (p_next?.y ?? p.y*2) - p.y;
+        return {x: round(p.x + vx/2, 1), y: round(p.y + vy/2, 1)};
+    }
+
     editPoint(index, x=undefined, y=undefined) {
         if (x) {
+            x = round(x, 1);
             this._points[index].x = x;
             this._markers[index].setAttribute("x", x);
             this._labels[index].setXvalue(x);
         }
         
         if (y) {
+            y = round(y, 1);
             this._points[index].y = y;
             this._markers[index].setAttribute("y", y);
             this._labels[index].setYvalue(y);
@@ -179,7 +205,7 @@ class Polygon {
     }
 
     addPoint(x, y) {
-        let p = { x: round(x), y: round(y) };
+        let p = { x: round(x, 1), y: round(y, 1) };
         this._points.push(p);
 
         let marker = document.createElementNS("http://www.w3.org/2000/svg","use");
@@ -190,12 +216,12 @@ class Polygon {
         this._svg.appendChild(marker);
 
         let lbl = new PointLabel(p, this._points.length-1);
-        lbl.setOnxinput((e) => { this.editPoint(lbl._index, +e.target.value) });
-        lbl.setOnyinput((e) => { p.y = +e.target.value; this.update(); marker.setAttribute("y", p.y); });
+        lbl.setOnxinput((e) => { this.editPoint(lbl.getIndex(), +e.target.value) });
+        lbl.setOnyinput((e) => { this.editPoint(lbl.getIndex(), undefined, +e.target.value) });
         lbl.setOndelete(() => { this.removePoint(lbl._index); });
 
         this._labels.push(lbl);
-        this._point_list_elem.appendChild(lbl._lbl);
+        this._point_list_elem.appendChild(lbl.getLabel());
 
         this.update();
     }
@@ -223,13 +249,13 @@ class Polygon {
 
         const v1 = { x: p.x - p_prev.x, y: p.y - p_prev.y };
         const v1_l = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
-        v1.x /= v1_l;
-        v1.y /= v1_l;
+        v1.x /= v1_l?v1_l:1;
+        v1.y /= v1_l?v1_l:1;
 
         const v2 = { x: p_next.x - p.x, y: p_next.y - p.y };
         const v2_l = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
-        v2.x /= v2_l;
-        v2.y /= v2_l;
+        v2.x /= v2_l?v2_l:1;
+        v2.y /= v2_l?v2_l:1;
 
         let angle = Math.atan2(v2.y, v2.x) - Math.atan2(v1.y, v1.x); // angle between two sides (tail-tail)
         angle = Math.PI - angle; // to tip-tail angle of vectors
@@ -237,7 +263,7 @@ class Polygon {
 
         let invert_curve = angle > Math.PI ? 0 : 1;
 
-        let l = this._radius / Math.abs(Math.tan(angle / 2));
+        let l = (this._radius / Math.abs(Math.tan(angle / 2)));
         let r = this._radius;
 
         let min = Math.min(v1_l / 2, v2_l / 2);
@@ -245,7 +271,7 @@ class Polygon {
             r = Math.abs(Math.tan(angle / 2)) * min;
             l = min;
         }
-        return {radius: r, invert_curve: invert_curve, point: p, vector1: v1, vectr2: v2, angle: angle, length: l}
+        return {radius: r, invert_curve: invert_curve, point: p, vector1: v1, vectr2: v2, angle: angle, length: l?l:0}
     }
 
     generateRoundedPath() {
@@ -345,4 +371,9 @@ document.getElementById("color-pick").oninput = (e) => {
 
 document.getElementById("corner-style-edt").oninput = (e) => {
     poly.setCornerStyle(e.target.value);
+}
+
+document.getElementById("add-point-btn").onclick = () => {
+    let p = poly.getHalfwayPoint();
+    poly.addPoint(p.x, p.y);
 }

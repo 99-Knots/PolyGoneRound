@@ -9,42 +9,35 @@
 
 <body>
     <div class="container">
-        <div class="canvas">
-            <svg id="pen" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 520 520">
-                <defs>
-                    <circle id="point-marker" cx="0" cy="0" r="5"/>
-                </defs>
-                <path fill="#0000ff" d="M0,0" />
-                <polyline stroke="#0008" fill="none" points="0,0" />
-            </svg>
-        </div>
+        <svg id="canvas" class="canvas" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <circle id="point-marker" cx="0" cy="0" r="5"/>
+            </defs>
+            <path fill="#0000ff" d="M0,0" />
+            <polyline stroke="#0008" fill="none" points="0,0" />
+        </svg>
         <div id="controls" class="controls">
-            <div class="slider-container">
-                <label for="radius-sld">radius: </label>
+            <label class="col-1" for="radius-sld">radius: </label>
+            <span class="col-2 slider-container">
                 <input id="radius-sld" type="range" min="0" max="100" value="50">
                 <input id="radius-edt" type="number" min="0" max="999" step="10" value="50">
-            </div>
-            <div>
-                <input id="radius-limit-chk" type="checkbox" name="limit radius">
-                <label for="radius-limit-chk">enforce consistent radius</label>
-            </div>
-            <div>
-                <input id="line-vis-chk" type="checkbox" name="line visibility" checked>
-                <label for="line-vis-chk">show polygon outline</label>
-            </div>
-            <div>
-                <label for="color-pick">color: </label>
-                <input id="color-pick" type="color" value="#0000ff">
-            </div>
-            <div>
-                <label for="corner-style-edt">corner style: </label>
-                <select id="corner-style-edt">
-                    <option value="arc">Arc</option>
-                    <option value="bezier">Bezier</option>
-                </select>
-            </div>
-            <button id="clear-btn">clear</button>
-            <ul id="point-list"></ul>
+            </span>
+            <label class="col-1" for="radius-limit-chk">enforce consistent radius: </label>
+            <input class="col-2" id="radius-limit-chk" type="checkbox" name="limit radius">
+            <label class="col-1" for="line-vis-chk">show polygon outline: </label>
+            <input class="col-2" id="line-vis-chk" type="checkbox" name="line visibility" checked>
+
+            <label class="col-1" for="color-pick">color: </label>
+            <input class="col-2" id="color-pick" type="color" value="#0000ff">
+
+            <label class="col-1" for="corner-style-edt">corner style: </label>
+            <select class="col-2" id="corner-style-edt">
+                <option value="arc">Arc</option>
+                <option value="bezier">Bezier</option>
+            </select>
+            <button class="col-1" id="clear-btn">clear</button>
+            <ul class="col-1-2 point-list" id="point-list"></ul>
+            <button id="add-point-btn" class="col-2">+</button>
         </div>
     </div>
     <div class="code-container">
