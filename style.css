@@ -1,10 +1,11 @@
 .canvas {
+    max-width: 100%;
+    width: 500px;
     background: lightgray;
     touch-action: none;
     user-select: none;
     flex: 0 0 auto;
 }
-
 
 .container {
     display: flex;
@@ -22,18 +23,14 @@
 }
 
 .controls {
-    margin: 2rem;
+    padding: 1em 0 1em 1em;
     display: grid;
     justify-items: start;
+    gap: 0.3em;
 }
 
 .slider-container {
     display: flex;
-}
-
-.slider-container input:last-of-type {
-    width: 3em;
-    text-align: right;
 }
 
 .code-container {
@@ -57,11 +54,11 @@
 ul {
     list-style-type: none;
     padding-inline-start: 0;
-    margin-block-end: 0.5em;
+    margin-block-end: 0;
 }
 
-li input {
-    width: 4em;
+.coord {
+    width: 3em;
     text-align: right;
 }
 
@@ -79,9 +76,4 @@ use {
     position: absolute;
     right: 0.5em;
     top: 0.5em;
-}
-
-#add-point-btn {
-    justify-self: center;
-    width: 30%;
 }

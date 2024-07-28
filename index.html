@@ -14,13 +14,13 @@
                 <circle id="point-marker" cx="0" cy="0" r="5"/>
             </defs>
             <path fill="#0000ff" d="M0,0" />
-            <polyline stroke="#0008" fill="none" points="0,0" />
+            <polygon fill="none" points="0,0" />
         </svg>
         <div id="controls" class="controls">
             <label class="col-1" for="radius-sld">radius: </label>
             <span class="col-2 slider-container">
                 <input id="radius-sld" type="range" min="0" max="100" value="50">
-                <input id="radius-edt" type="number" min="0" max="999" step="10" value="50">
+                <input id="radius-edt" class="coord" type="number" min="0" max="999" step="10" value="50">px
             </span>
             <label class="col-1" for="radius-limit-chk">enforce consistent radius: </label>
             <input class="col-2" id="radius-limit-chk" type="checkbox" name="limit radius">
@@ -35,9 +35,13 @@
                 <option value="arc">Arc</option>
                 <option value="bezier">Bezier</option>
             </select>
+            <label for="size-container" class="col-1">size:</label>
+            <span id="size-container" class="col-2">
+                <input id="size-edt" class="coord" type="number" min="1" value="100">px
+            </span>
             <button class="col-1" id="clear-btn">clear</button>
             <ul class="col-1-2 point-list" id="point-list"></ul>
-            <button id="add-point-btn" class="col-2">+</button>
+            <button id="add-point-btn" class="col-1">+</button>
         </div>
     </div>
     <div class="code-container">
