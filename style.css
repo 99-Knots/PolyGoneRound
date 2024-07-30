@@ -1,16 +1,44 @@
-.canvas {
-    max-width: 100%;
-    width: 500px;
-    background: lightgray;
-    touch-action: none;
-    user-select: none;
-    flex: 0 0 auto;
+body {
+    --main-color-1: 107, 136, 239;
+    --main-color-2: 235, 87, 87;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 1rem;
 }
+
+
+button {
+    padding: 0.5rem 1rem;
+    background-color: rgb(var(--main-color-1));
+    color: #ffffff;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
 
 .container {
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
+    
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.canvas {
+    max-width: 100%;
+    width: 500px;
+    touch-action: none;
+    user-select: none;
+    flex: 0 0 auto;
+    margin: 0 auto 1.5em;
+    outline: 0.125em dashed rgb(var(--main-color-1));
+    border-radius: 0.75em;
 }
 
 .point-lbl .title {
@@ -18,25 +46,112 @@
     width: 4em;
 }
 
-.point-list input {
-    margin-right: 1.5em;
-}
 
 .controls {
-    padding: 1em 0 1em 1em;
     display: grid;
-    justify-items: start;
+    width: 100%;
     gap: 0.3em;
+    grid-template-columns: 1fr 2fr;
+    align-items: center;
+    margin-bottom: 1.5em;
+}
+
+.controls label {
+    text-align: right;
+    margin: 0;
 }
 
 .slider-container {
     display: flex;
+    align-items: center;
+    gap: 0.125em;
+    width: 100%;
+    max-width: 16rem;
+}
+
+.controls input, .controls select {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 16rem; /* Constrain width for larger screens */
+    border: 0.0625rem solid #ccc;
+    border-radius: 0.375rem;
+    background: #ffffff;
+    height: 2em;
+    text-align: right;
+}
+
+.controls input[type="checkbox"] {
+    max-height: 50%;
+}
+
+.controls .slider-container input[type="number"] {
+    max-width: 4em;
+}
+
+.point-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+    margin-block-end: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.point-list > li {
+    flex: 1 1 35%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 0.75rem;
+    border: 0.0625rem solid #ddd;
+    border-radius: 0.375rem;
+    text-align: right;
+}
+
+.point-list > li input[type="number"] {
+    width: 4.5em; /* Fit 3-4 digit numbers */
+    margin: 0 0.5rem;
+}
+
+
+.point-list > li button {
+    background-color: rgb(var(--main-color-2));
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    width: 2em;
+    padding: 0;
+    cursor: pointer;
+}
+
+.point-buttons {
+    display: flex;
+    justify-content: space-between;
 }
 
 .code-container {
-    width: 50vw;
-    position: relative;
+    background: #ffffff;
+    box-sizing: border-box;
     padding: 1.5em;
+    width: 100%;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+#copy-code-btn {
+    position: absolute;
+    bottom: 0.75em;
+    right: 0.75em;
+    
+}
+
+.code-container > pre >code {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .col-1 {
@@ -51,29 +166,7 @@
     grid-column: 1/3;
 }
 
-ul {
-    list-style-type: none;
-    padding-inline-start: 0;
-    margin-block-end: 0;
-}
-
-.coord {
-    width: 3em;
-    text-align: right;
-}
-
 use {
-    fill: #faa8;
-    stroke: #fffa
-}
-
-
-#path-code {
-    white-space: pre-wrap;
-}
-
-#copy-code-btn {
-    position: absolute;
-    right: 0.5em;
-    top: 0.5em;
+    fill: rgba(var(--main-color-2),0.5);
+    stroke: rgba(255, 255, 255, 0.5)
 }

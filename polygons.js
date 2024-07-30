@@ -15,14 +15,12 @@ class PointLabel {
         this._x_edt.min = 0;
         this._x_edt.value = point.x;
         this._x_edt.id = `point-${this._index+1}-x-edt`;
-        this._x_edt.classList.add("coord");
 
         this._y_edt = document.createElement("input");
         this._y_edt.type = "number";
         this._y_edt.min = 0;
         this._y_edt.value = point.y;
         this._y_edt.id = `point-${this._index+1}-y-edt`;
-        this._y_edt.classList.add("coord");
 
         this._del_btn = document.createElement("button");
         this._del_btn.textContent = "x";
@@ -31,7 +29,7 @@ class PointLabel {
         this._title.textContent = `Point ${this._index+1}: `;
         this._title.classList.add("title");
 
-        this._lbl.appendChild(this._title);
+        //this._lbl.appendChild(this._title);
         this._lbl.appendChild(document.createTextNode("x: "))
         this._lbl.appendChild(this._x_edt);
         this._lbl.appendChild(document.createTextNode("y: "))
@@ -95,7 +93,6 @@ class PointLabel {
 
 class Polygon {
     constructor(w, h, r, limit_r, c_style, line_vis, color) {
-        console.log(w, h, r, limit_r, c_style, line_vis, color)
         this._svg = document.getElementById("canvas");
         this._outline = this._svg.getElementsByTagName("polygon")[0];
         this._shape = this._svg.getElementsByTagName("path")[0];
@@ -149,8 +146,10 @@ class Polygon {
 
         window.onresize = (e) => {
             this.recalcFactors();
+            this.update();
         }
 
+        this.recalcFactors();
         this.update();
     }
 
@@ -169,7 +168,8 @@ class Polygon {
     get limit_radius() {return this._limit_radius}
 
     set line_visibility(b) {
-        this._outline.style.stroke = b ? "#0008" : "none";
+        //this._outline.style.stroke = b ? "#0008" : "none";
+        this._outline.style.display = b ? "block" : "none";
         this.update();
     }
 
@@ -203,6 +203,7 @@ class Polygon {
         this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
         this.recalcFactors();
         this._outline.style.strokeWidth = this._x_factor*2;
+        this._outline.style.strokeDasharray = `${this._x_factor*4} ${this._x_factor*2}`;
         document.getElementById("point-marker").setAttribute("stroke-width", this._x_factor*2);
     }
 
@@ -246,14 +247,14 @@ class Polygon {
     }
 
     editPoint(index, x=undefined, y=undefined) {
-        if (x) {
+        if (x !== undefined) {
             x = round(x, 1);
             this._points[index].x = x;
             this._markers[index].setAttribute("x", x);
             this._labels[index].x_value = x;
         }
         
-        if (y) {
+        if (y !== undefined) {
             y = round(y, 1);
             this._points[index].y = y;
             this._markers[index].setAttribute("y", y);
@@ -369,7 +370,7 @@ class Polygon {
     createSVGCode() {
         let code = "";
         code = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${this._w} ${this._h}">\n\t<path fill="${this.color}" d="${this._d}"/>\n</svg>`
-        document.getElementById("path-code").innerText = code;
+        document.getElementById("path-code").textContent = code;
     }
 
     clear(x, y) {
