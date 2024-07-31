@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
     <title>Polygon Drawing</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -16,7 +17,7 @@
             <path fill="#0000ff" d="M0,0" />
             <polygon stroke="#008" strokeStyle="dashed" fill="none" points="0,0" />
         </svg>
-        <div id="controls" class="controls">
+        <div id="controls" class="controls row-1-2">
             <label class="col-1" for="radius-sld">radius: </label>
             <span class="col-2 slider-container">
                 <input id="radius-sld" type="range" min="0" max="100" value="50">
@@ -43,12 +44,12 @@
                 <button class="col-1" id="clear-btn">clear</button>
             </div>
         </div>
+        <div class="code-container">
+            <pre><code id="path-code"></code></pre>
+            <button id="copy-code-btn">copy</button>
+        </div>
+        <script src="polygons.js"></script>
     </div>
-    <div class="code-container">
-        <pre><code id="path-code"></code></pre>
-        <button id="copy-code-btn">copy</button>
-    </div>
-    <script src="polygons.js"></script>
 </body>
 
 </html>

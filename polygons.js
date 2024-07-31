@@ -218,9 +218,11 @@ class Polygon {
     get height() {return this._h}
 
     recalcFactors() {
-        let rect = this._svg.getBoundingClientRect();
-        this._x_factor = (this._w+2*this._padding)/rect.width;
-        this._y_factor = (this._h+2*this._padding)/rect.height;
+        let w = this._svg.clientWidth;
+        let h = this._svg.clientHeight;
+        
+        this._x_factor = (this._w+2*this._padding)/w;
+        this._y_factor = (this._h+2*this._padding)/h;
     }
 
     setSVGPaths() {
@@ -374,12 +376,9 @@ class Polygon {
     }
 
     clear(x, y) {
-        this._points = [];
-        this._d = "";
-        this.update();
-        this._markers.forEach( m => {this._svg.removeChild(m)});
-        this._markers = [];
-        this._point_list_elem.textContent = "";
+        for (let i = this._points.length-1; i>=0; i--) {
+            this.removePoint(i);
+        }
     }
 }
 
