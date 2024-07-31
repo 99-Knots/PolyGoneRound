@@ -23,17 +23,23 @@ class PointLabel {
         this._y_edt.id = `point-${this._index+1}-y-edt`;
 
         this._del_btn = document.createElement("button");
-        this._del_btn.textContent = "x";
+        this._del_btn.textContent = "✕";
 
         this._title = document.createElement("span");
         this._title.textContent = `Point ${this._index+1}: `;
         this._title.classList.add("title");
 
+        let x_span = document.createElement("span");
+        x_span.appendChild(document.createTextNode("x:"));
+        x_span.appendChild(this._x_edt);
+
+        let y_span = document.createElement("span");
+        y_span.appendChild(document.createTextNode("y:"));
+        y_span.appendChild(this._y_edt);
+
         //this._lbl.appendChild(this._title);
-        this._lbl.appendChild(document.createTextNode("x: "))
-        this._lbl.appendChild(this._x_edt);
-        this._lbl.appendChild(document.createTextNode("y: "))
-        this._lbl.appendChild(this._y_edt);
+        this._lbl.appendChild(x_span);
+        this._lbl.appendChild(y_span);
         this._lbl.appendChild(this._del_btn);
     }
 
@@ -106,6 +112,8 @@ class Polygon {
         this._markers = [];
         this._point_list_elem = document.getElementById("point-list")
 
+        this._padding = 0;
+        this._marker_radius = 0;
         this.width = w ?? 100;
         this.height = h ?? 100;
         this.radius = r ?? 50;
@@ -168,7 +176,6 @@ class Polygon {
     get limit_radius() {return this._limit_radius}
 
     set line_visibility(b) {
-        //this._outline.style.stroke = b ? "#0008" : "none";
         this._outline.style.display = b ? "block" : "none";
         this.update();
     }
@@ -198,20 +205,14 @@ class Polygon {
 
     set width(w) {
         this._w = w;
-        this.marker_radius = this._w * 0.05;
-        this._padding = this._w* 0.05;
-        this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
         this.recalcFactors();
-        this._outline.style.strokeWidth = this._x_factor*2;
-        this._outline.style.strokeDasharray = `${this._x_factor*4} ${this._x_factor*2}`;
-        document.getElementById("point-marker").setAttribute("stroke-width", this._x_factor*2);
     }
 
     get width() {return this._w}
 
     set height(h) {
         this._h = h;
-        this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
+        //this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
         this.recalcFactors();
     }
 
@@ -223,6 +224,15 @@ class Polygon {
         
         this._x_factor = (this._w+2*this._padding)/w;
         this._y_factor = (this._h+2*this._padding)/h;
+
+        let factor = window.getComputedStyle(this._svg).getPropertyValue("--marker-factor");
+        this.marker_radius = this._x_factor*factor;
+        this._padding = this._w * 0.05;
+        this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
+        
+        this._outline.style.strokeWidth = this._x_factor*2;
+        this._outline.style.strokeDasharray = `${this._x_factor*4} ${this._x_factor*2}`;
+        document.getElementById("point-marker").setAttribute("stroke-width", this._x_factor*2);
     }
 
     setSVGPaths() {
