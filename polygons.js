@@ -227,7 +227,7 @@ class Polygon {
 
         let factor = window.getComputedStyle(this._svg).getPropertyValue("--marker-factor");
         this.marker_radius = this._x_factor*factor;
-        this._padding = this._w * 0.05;
+        this._padding = this._w * 0;
         this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
         
         this._outline.style.strokeWidth = this._x_factor*2;
@@ -396,7 +396,8 @@ class Polygon {
 document.getElementById("copy-code-btn").onclick = () => {
     navigator.clipboard.writeText(document.getElementById("path-code").innerText)
         .then(() => {
-            alert('Text copied to clipboard');
+            document.getElementById("copy-popup").classList.toggle("show", true);
+            setTimeout(() => {document.getElementById("copy-popup").classList.toggle("show", false);}, 2000)
         })
         .catch(err => {
             console.error('Error copying text: ', err);

@@ -27,7 +27,7 @@ button {
     gap: 1.5rem;
     background: #ffffff;
     border-radius: 0.75rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
     padding: 1.5rem;
 }
 
@@ -150,7 +150,7 @@ button {
     padding: 1.5em;
     width: 100%;
     border-radius: 0.75rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
     position: relative;
 }
 
@@ -173,6 +173,25 @@ button {
 .code-container > pre code {
     white-space: pre-wrap;
     word-wrap: break-word;
+}
+
+.code-container .popup {
+    visibility: visible;
+    opacity: 0;
+    bottom: 0;
+    position: absolute;
+    color: #333;
+    background-color: #ddd;
+    padding: 1.5em;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
+    transition: visibility 0.2s, opacity 0.2s, bottom 0.2s;
+}
+
+.code-container .popup.show {
+    bottom: 2em;
+    visibility: visible;
+    opacity: 1;
 }
 
 use {
