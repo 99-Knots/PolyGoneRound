@@ -105,6 +105,8 @@ class Polygon {
 
         this._w = 0;
         this._h = 0;
+        this._ratio_w = 1;
+        this._ratio_h = 1;
 
         this._d = "";
         this._points = [];
@@ -162,7 +164,7 @@ class Polygon {
     }
 
     set radius(r) {
-        this._radius = r;
+        this._radius = r/100*Math.min(this._w, this._h)/2;
         this.update();
     }
 
@@ -203,22 +205,67 @@ class Polygon {
 
     get marker_radius() {return this._marker_radius};
 
+    set ratio_w(r_w) {
+        this._ratio_w = r_w ? Math.abs(r_w) : 1;
+        if (this._ratio_w >= this._ratio_h) {
+            console.log(r_w)
+            this.width = 100;
+            this.height = 100 * this._ratio_h/this._ratio_w;
+        }
+        else {
+            this.height = 100;
+            this.width = 100 * this._ratio_w/this._ratio_h;
+        }
+        this.update();
+    }
+
+    get ratio_w() {
+        return this._ratio_w
+    }
+
+    set ratio_h(r_h) {
+        this._ratio_h = r_h ? Math.abs(r_h) : 1;
+        if (this._ratio_w >= this._ratio_h) {
+            this.width = 100;
+            this.height = 100 * this._ratio_h/this._ratio_w;
+        }
+        else {
+            this.height = 100;
+            this.width = 100 * this._ratio_w/this._ratio_h;
+        }
+        this.update();
+    }
+
+    get ratio_h() {
+        return this._ratio_h
+    }
+
     set width(w) {
+        let old_w = this._w;
         this._w = w;
         //this._padding = this._w * 0.05;
         this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
         this.recalcFactors();
+        for (let i=0; i< this._points.length; i++) {
+            this.editPoint(i, this._points[i].x/old_w*w)
+        }
     }
 
     get width() {return this._w}
 
     set height(h) {
+        let old_h = this._h;
         this._h = h;
         this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
         this.recalcFactors();
+        for (let i=0; i< this._points.length; i++) {
+            this.editPoint(i, undefined, this._points[i].y/old_h*h)
+        }
     }
 
     get height() {return this._h}
+
+
 
     recalcMarker() {
         let factor = window.getComputedStyle(this._svg).getPropertyValue("--marker-factor");
@@ -265,14 +312,14 @@ class Polygon {
             x = round(x, 1);
             this._points[index].x = x;
             this._markers[index].setAttribute("x", x);
-            this._labels[index].x_value = x;
+            this._labels[index].x_value = x/this._w*100;
         }
         
         if (y !== undefined) {
             y = round(y, 1);
             this._points[index].y = y;
             this._markers[index].setAttribute("y", y);
-            this._labels[index].y_value = y;
+            this._labels[index].y_value = y/this._h*100;
         }
         this.update();
     }
@@ -289,8 +336,8 @@ class Polygon {
         this._svg.appendChild(marker);
 
         let lbl = new PointLabel(p, this._points.length-1);
-        lbl.onxinput = (e) => { this.editPoint(lbl.index, +e.target.value) };
-        lbl.onyinput = (e) => { this.editPoint(lbl.index, undefined, +e.target.value) };
+        lbl.onxinput = (e) => { this.editPoint(lbl.index, (+e.target.value)/this._w*100) };
+        lbl.onyinput = (e) => { this.editPoint(lbl.index, undefined, (+e.target.value)/this._h*100) };
         lbl.ondelete = () => { this.removePoint(lbl._index); };
 
         this._labels.push(lbl);
@@ -414,9 +461,10 @@ let radius_check = document.getElementById("radius-limit-chk");
 let line_vis = document.getElementById("line-vis-chk");
 let color_pick = document.getElementById("color-pick");
 let c_style_edt = document.getElementById("corner-style-edt");
-let s_edt = document.getElementById("size-edt");
+let ratio_w_edt = document.getElementById("ratio-w-edt");
+let ratio_h_edt = document.getElementById("ratio-h-edt");
 
-const poly = new Polygon(+s_edt.value, +s_edt.value, +radius_edit.value, radius_check.checked, c_style_edt.value, line_vis.value, color_pick.value);
+const poly = new Polygon(+ratio_w_edt.value*100, +ratio_h_edt.value*100, +radius_edit.value, radius_check.checked, c_style_edt.value, line_vis.value, color_pick.value);
 poly.radius = radius_edit.value;
 
 radius_slider.oninput = (e) => {
@@ -446,9 +494,12 @@ c_style_edt.oninput = (e) => {
     poly.corner_style = e.target.value;
 }
 
-s_edt.oninput = (e) => {
-    poly.width = +e.target.value;
-    poly.height = 100;
+ratio_w_edt.oninput = (e) => {
+    poly.ratio_w = +e.target.value;
+}
+
+ratio_h_edt.oninput = (e) => {
+    poly.ratio_h = +e.target.value;
 }
 
 document.getElementById("clear-btn").onclick = () => {

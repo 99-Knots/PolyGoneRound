@@ -63,13 +63,22 @@ header a {
     cursor: pointer;
 }
 
-.canvas {
-    --marker-factor: 20;
+.canvas-container {
+    width: 100%;
     max-width: 100%;
     max-height: 80svh;
+    aspect-ratio: 1;
+    display: flex;
+}
+
+.canvas {
+    --marker-factor: 20;
+    box-sizing: border-box;
+    max-width: 100%;
+    max-height: 100%;
     touch-action: none;
     user-select: none;
-    margin: 0 auto;
+    margin: auto;
     border: 2px solid rgb(var(--main-color-1));
     border-radius: 0.75em;
 }
@@ -93,15 +102,7 @@ header a {
     margin: 0;
 }
 
-.slider-container {
-    display: flex;
-    align-items: center;
-    gap: 0.125em;
-    width: 100%;
-    max-width: 16rem;
-}
-
-.controls input, .controls select {
+.controls input, .controls select{
     box-sizing: border-box;
     width: 100%;
     max-width: 16rem; /* Constrain width for larger screens */
@@ -111,6 +112,14 @@ header a {
     height: 2em;
     accent-color: rgb(var(--main-color-1));
     text-align: right;
+}
+
+.controls .control-grouped {
+    display: flex;
+    align-items: center;
+    gap: 0.125em;
+    width: 100%;
+    max-width: 16rem;
 }
 
 .controls input[type="checkbox"] {
