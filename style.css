@@ -1,14 +1,60 @@
+body, button, input {
+    font-family: Verdana, Tahoma, sans-serif;
+}
+
 body {
     --main-color-1: 107, 136, 239;
     --main-color-2: 235, 87, 87;
     background-color: #f5f5f5;
     color: #333;
     margin: 0;
-    padding: 1rem;
 }
 
+header {
+    position: sticky;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+    max-width: 100svw;
+    gap: 0.5em;
+    top: 0;
+    background-color: rgb(var(--main-color-1));
+    padding: 1em;
+    font-weight: bold;
+    border-radius: 0 0 0.75em 0.75em;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
+}
 
-button {
+header span {
+    color: #fff;
+    flex-grow: 1;
+}
+
+header svg {
+    fill: #fff;
+    height: 1.25em;
+}
+
+header a {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: repeat(3, min-content);
+    align-items: start;
+    gap: 1.5rem;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
+    padding: 1.5rem;
+    margin: 1rem;
+}
+
+.container button {
     padding: 0.5rem 1rem;
     background-color: rgb(var(--main-color-1));
     color: #ffffff;
@@ -17,27 +63,12 @@ button {
     cursor: pointer;
 }
 
-
-.container {
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: repeat(3, min-content);
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    background: #ffffff;
-    border-radius: 0.75rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
-    padding: 1.5rem;
-}
-
 .canvas {
     --marker-factor: 20;
     max-width: 100%;
     max-height: 80svh;
     touch-action: none;
     user-select: none;
-    flex: 0 0 50%;
     margin: 0 auto;
     border: 2px solid rgb(var(--main-color-1));
     border-radius: 0.75em;
@@ -53,7 +84,6 @@ button {
     display: grid;
     width: 100%;
     gap: 0.3em;
-    flex: 1 1 25%;
     grid-template-columns: 1fr 2fr;
     align-items: center;
 }
@@ -167,7 +197,6 @@ button {
     position: absolute;
     bottom: 0.75em;
     right: 0.75em;
-    
 }
 
 .code-container > pre code {
@@ -179,6 +208,8 @@ button {
     visibility: visible;
     opacity: 0;
     bottom: 0;
+    right: 0;
+    margin: 0 0.75em;
     position: absolute;
     color: #333;
     background-color: #ddd;
@@ -189,7 +220,7 @@ button {
 }
 
 .code-container .popup.show {
-    bottom: 2em;
+    bottom: 3em;
     visibility: visible;
     opacity: 1;
 }

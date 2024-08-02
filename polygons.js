@@ -205,6 +205,8 @@ class Polygon {
 
     set width(w) {
         this._w = w;
+        //this._padding = this._w * 0.05;
+        this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
         this.recalcFactors();
     }
 
@@ -212,11 +214,19 @@ class Polygon {
 
     set height(h) {
         this._h = h;
-        //this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
+        this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
         this.recalcFactors();
     }
 
     get height() {return this._h}
+
+    recalcMarker() {
+        let factor = window.getComputedStyle(this._svg).getPropertyValue("--marker-factor");
+        this.marker_radius = this._x_factor*factor;
+        this._outline.style.strokeWidth = this._x_factor*2;
+        this._outline.style.strokeDasharray = `${this._x_factor*4} ${this._x_factor*2}`;
+        document.getElementById("point-marker").setAttribute("stroke-width", this._x_factor*2);
+    }    
 
     recalcFactors() {
         let w = this._svg.clientWidth;
@@ -224,15 +234,7 @@ class Polygon {
         
         this._x_factor = (this._w+2*this._padding)/w;
         this._y_factor = (this._h+2*this._padding)/h;
-
-        let factor = window.getComputedStyle(this._svg).getPropertyValue("--marker-factor");
-        this.marker_radius = this._x_factor*factor;
-        this._padding = this._w * 0;
-        this._svg.setAttribute("viewBox", `${-this._padding} ${-this._padding} ${this._w+2*this._padding} ${this._h+2*this._padding}`);
-        
-        this._outline.style.strokeWidth = this._x_factor*2;
-        this._outline.style.strokeDasharray = `${this._x_factor*4} ${this._x_factor*2}`;
-        document.getElementById("point-marker").setAttribute("stroke-width", this._x_factor*2);
+        this.recalcMarker();
     }
 
     setSVGPaths() {
@@ -381,7 +383,7 @@ class Polygon {
 
     createSVGCode() {
         let code = "";
-        code = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${this._w} ${this._h}">\n\t<path fill="${this.color}" d="${this._d}"/>\n</svg>`
+        code = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${this._w} ${this._h}">\n    <path fill="${this.color}" d="${this._d}"/>\n</svg>`
         document.getElementById("path-code").textContent = code;
     }
 
@@ -389,6 +391,8 @@ class Polygon {
         for (let i = this._points.length-1; i>=0; i--) {
             this.removePoint(i);
         }
+        this._d = "";
+        this.createSVGCode();
     }
 }
 
@@ -444,7 +448,7 @@ c_style_edt.oninput = (e) => {
 
 s_edt.oninput = (e) => {
     poly.width = +e.target.value;
-    poly.height = +e.target.value;
+    poly.height = 100;
 }
 
 document.getElementById("clear-btn").onclick = () => {
