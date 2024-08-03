@@ -89,11 +89,11 @@ class PointLabel {
     }
 
     set x_value(x) {
-        this._x_edt.value = x;
+        this._x_edt.value = round(x, 2);
     }
 
     set y_value(y) {
-        this._y_edt.value = y;
+        this._y_edt.value = round(y, 2);
     }
 }
 
