@@ -333,7 +333,7 @@ class Polygon {
         marker.setAttribute("y", y);
         marker.setAttribute("href", "#point-marker");
         this._markers.push(marker);
-        this._svg.appendChild(marker);
+        this._svg.getElementsByClassName("canvas-group")[0].appendChild(marker);
 
         let lbl = new PointLabel(p, this._points.length-1);
         lbl.onxinput = (e) => { this.editPoint(lbl.index, (+e.target.value)/this._w*100) };
