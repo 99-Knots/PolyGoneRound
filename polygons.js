@@ -132,7 +132,7 @@ class Polygon {
             for (let i=0; i<this._markers.length; i++) {
                 let p = this._points[i]
 
-                if ((x-p.x)**2 + (y-p.y)**2 < (this._marker_radius + 5)**2) {
+                if ((x-p.x)**2 + (y-p.y)**2 < (this._marker_radius + 2)**2) {
                     selected = i;
                 }
             }

@@ -4,10 +4,15 @@ body, button, input {
 
 body {
     --main-color-1: 107, 136, 239;
-    --main-color-2: 235, 87, 87;
+    --main-color-2: 239, 107, 139;
     background-color: #f5f5f5;
     color: #333;
     margin: 0;
+}
+
+*:focus {
+    outline-color: rgb(var(--main-color-2));
+    outline-offset: 2px;
 }
 
 header {
@@ -21,7 +26,7 @@ header {
     padding: 1em;
     font-weight: bold;
     border-radius: 0 0 0.75em 0.75em;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.4);
 }
 
 header span {
@@ -54,21 +59,23 @@ header .icon {
     margin: 1rem;
 }
 
-.container button {
+button {
     padding: 0.5rem 1rem;
     background-color: rgb(var(--main-color-1));
     color: #ffffff;
     border: none;
-    border-radius: 0.375rem;
+    border-radius: 0.5rem;
     cursor: pointer;
 }
 
 .canvas-container {
+    height: 100%;
     width: 100%;
-    max-width: 100%;
     max-height: 80svh;
     aspect-ratio: 1;
     display: flex;
+    justify-self: stretch;
+    align-items: center;
 }
 
 .canvas {
@@ -123,13 +130,100 @@ header .icon {
     max-width: 16rem;
 }
 
-.controls input[type="checkbox"] {
-    max-height: 50%;
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    margin: 0 auto;
+    width: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+input[type="checkbox"]:checked {
+    background-color: rgb(var(--main-color-1));
+}
+
+input[type="checkbox"]:checked::before {
+    content: "✔";
+    font-size: 140%;
+    color: #fff;
+    font-weight: bold;
 }
 
 .controls .slider-container input[type="number"] {
     max-width: 4em;
 }
+
+input[type="color"]::-webkit-color-swatch {
+    border-radius: 0.25em;
+    border-color: #ccc;
+}
+
+input[type="color"]::-moz-color-swatch {
+    border-radius: 0.25em;
+    border-color: #ccc;
+}
+
+input[type="range"] {
+    --track-height: 0.5rem;
+    --thumb-height: 1.5rem;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    border: none;
+    background: transparent; 
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: var(--track-height);
+    cursor: pointer;
+    background: #ddd;
+    border-radius: calc(var(--track-height)*0.5);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: var(--thumb-height);
+    aspect-ratio: 1;
+    background: rgb(var(--main-color-1));
+    border-radius: 50%;
+    margin-top: calc((var(--track-height) - var(--thumb-height)) * 0.5);
+    cursor: pointer;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {
+    outline: rgb(var(--main-color-2)) solid 2px;
+    outline-offset: 2px;
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: var(--track-height);
+    cursor: pointer;
+    background: #ddd;
+    border-radius: calc(var(--track-height)*0.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+    height: var(--thumb-height);
+    width: var(--thumb-height);
+    background: rgb(var(--main-color-1));
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    outline-color: 2px solid rgb(var(--main-color-2));
+    outline: 2px;
+}
+
 
 .point-container {
     width: 100%;
@@ -178,6 +272,10 @@ header .icon {
     cursor: pointer;
 }
 
+.point-list > li button:focus {
+    outline-color: rgb(var(--main-color-1));
+}
+
 .point-buttons {
     display: flex;
     justify-content: space-between;
@@ -190,7 +288,7 @@ header .icon {
     padding: 1.5em;
     width: 100%;
     border-radius: 0.75rem;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5) inset;
     position: relative;
 }
 
@@ -207,6 +305,7 @@ header .icon {
     position: absolute;
     bottom: 0.75em;
     right: 0.75em;
+    box-shadow: 5px 5px 10px #0008;
 }
 
 .code-container > pre code {
@@ -236,8 +335,9 @@ header .icon {
 }
 
 use {
-    fill: rgba(var(--main-color-2), 0.5);
-    stroke: rgba(255, 255, 255, 0.5)
+    fill: rgba(var(--main-color-2), 0.6);
+    stroke: rgba(255, 255, 255, 0.5);
+    box-shadow: 5px 5px 10px #0008;
 }
 
 .col-1 {
