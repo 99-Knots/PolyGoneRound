@@ -348,7 +348,7 @@ class Polygon {
 
     removePoint(i) {
         this._point_list_elem.removeChild(this._labels[i].label);
-        this._svg.removeChild(this._markers[i]);
+        this._svg.getElementsByClassName("canvas-group")[0].removeChild(this._markers[i]);
         this._points.splice(i, 1);
         this._labels.splice(i, 1);
         this._markers.splice(i, 1);
