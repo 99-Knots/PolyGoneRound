@@ -1,6 +1,8 @@
-# <img alt="makeshift logo of a white star wirh rounded corners in a blue tetragon with rounded corners" src="favicon.ico" align="left" width="64px">PolyGoneRound
+# PolyGoneRound
 
-[**make your polygons more well-rounded**](https://99-knots.github.io/PolyGoneRound/)
+<img alt="screencapture of the app showing a star on the canvas as an example and the settings" src="example.png">
+
+**»[make your polygons more well-rounded](https://99-knots.github.io/PolyGoneRound/)«**
 
 PolyGoneRound is a lightweight web app designed to create and fully customize polygons with rounded corners directly in the browser. Whether you are creating icons, logos, UI elements or just some fun background graphics, PolyGoneRound will make your shapes more visually appealing and less likely to poke someone's eye out. The dynamically generated SVG code allows for easy export and use in your projects.
 
